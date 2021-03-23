@@ -111,8 +111,6 @@ numeric() {
 }
 
 check-run-command-as-root() {
-  [[ "$(id -u)" = 0 ]] || return
-
   # Allow Azure Pipelines/GitHub Actions/Docker/Concourse/Kubernetes to do everything as root (as it's normal there)
   [[ -f /proc/1/cgroup ]] && grep -E "azpl_job|actions_job|docker|garden|kubepods" -q /proc/1/cgroup && return
 
@@ -121,12 +119,6 @@ check-run-command-as-root() {
 
   # It's fine to run this as root as it's not changing anything.
   [[ "$HOMEBREW_COMMAND" = "--prefix" ]] && return
-
-  odie <<EOS
-Running Homebrew as root is extremely dangerous and no longer supported.
-As Homebrew does not drop privileges on installation you would be giving all
-build scripts full access to your system.
-EOS
 }
 
 check-prefix-is-not-tmpdir() {
